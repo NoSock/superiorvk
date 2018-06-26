@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { VkAuthGuard } from './guards';
 import { AppComponent } from '../app/app.component';
 import {AuthComponent} from '../auth/auth.component';
+import {TestComponent} from '../test/test.component';
 
 const routes: Routes = [
   {
@@ -14,7 +15,11 @@ const routes: Routes = [
   {
     path: 'auth',
     component: AuthComponent,
-  }
+  },
+  {
+    path: 'test',
+    component: TestComponent,
+  },
 ];
 
 @NgModule({
