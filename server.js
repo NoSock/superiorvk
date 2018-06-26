@@ -22,8 +22,10 @@ app.use(forceSSL());
 app.use(express.static(publicPath));
 
 app.get('/*', function (req, res) {
-  res.sendFile(publicPath);
+  res.redirect('/');
 });
+
+
 
 // Start the app by listening on the default Heroku port
 app.listen(process.env.PORT || 8080);
