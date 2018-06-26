@@ -22,7 +22,7 @@ app.use(forceSSL());
 app.use(express.static(publicPath));
 
 app.get('/*', function (req, res) {
-  res.redirect('/');
+  res.sendFile(publicPath +'/index.html');
 });
 
 
