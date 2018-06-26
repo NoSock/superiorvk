@@ -7,7 +7,7 @@ import {DomSanitizer} from '@angular/platform-browser';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
-  private path;
+  public path;
 
   constructor(private sanitizer: DomSanitizer) { }
 
