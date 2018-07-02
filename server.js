@@ -19,7 +19,7 @@ const forceSSL = () =>
   };
 
 server.use(forceSSL());
-server.use(bodyParser.raw());
+server.use(bodyParser.json());
 
 // Serve only the static files form the dist directory
 server.use(express.static(publicPath));
