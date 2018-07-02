@@ -1,7 +1,7 @@
 'use strict'
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const bd = require('./bd');
+const db = require('./db');
 
 const secret = require('config').JWTSecret;
 
@@ -111,7 +111,7 @@ const reg = (login, password) => {
   return {
     auth: true,
     id,
-    token: generateUserToken(id);
+    token: generateUserToken(id)
   }
 };
 
