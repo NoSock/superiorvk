@@ -111,7 +111,7 @@ const reg = (login, password) => {
   return {
     auth: true,
     id,
-    token: generateUserToken(id);
+    token: generateUserToken(id)
   }
 };
 
