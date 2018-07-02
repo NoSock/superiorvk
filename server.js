@@ -1,6 +1,6 @@
 const express = require('express');
-const config = require('server/config');
-const auth = require('auth');
+const config = require('./server/config');
+const auth = require('./server/auth');
 
 const publicPath = __dirname + '/dist/superiorvk';
 

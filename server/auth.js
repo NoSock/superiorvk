@@ -1,7 +1,7 @@
 'use strict'
 const jwt = require('jsonwebtoken');
-const bd = require('bd');
 const bcrypt = require('bcrypt');
+const bd = require('./bd');
 
 const secret = require('config').JWTSecret;
 
