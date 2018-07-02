@@ -23,13 +23,13 @@ server.use(express.static(publicPath));
 
 server.post('/authenticate', (req, res) => res
   .status(200).send(
-    auth.auth(req.get('method'), req.get('payload'))
+    auth.auth(req.body.method, req.body.payload)
   )
 );
 
 server.post('/register', (req, res) => res
   .status(200).send(
-    auth.reg(req.get('login'), req.get('password'))
+    auth.reg(req.body.login, req.body.password)
   )
 );
 
