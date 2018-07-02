@@ -1,9 +1,9 @@
 'use strict'
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const db = require('./db');
 
-const secret = require('config').JWTSecret;
+const db = require('./db');
+const secret = require('./config').JWTSecret;
 
 function generateUserToken(userId) {
   return jwt.sign(
