@@ -81,9 +81,9 @@ const jwtAuth = (token) => {
 };
 
 const authMethods = {
-  vk: vkAuth(token),
-  jwt: jwtAuth(token),
-  password: passHashAuth(login, passHash)
+  vk: vkAuth,
+  jwt: jwtAuth,
+  password: passHashAuth
 };
 
 const auth = (method, payload) => {
