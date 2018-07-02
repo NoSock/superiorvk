@@ -88,7 +88,7 @@ const authMethods = {
 
 const auth = (method, payload) => {
   if (!authMethods[method]) {
-    throw new Error(`Invalid auth method: &{method}`);
+    throw new Error(`Invalid auth method: ${method}`);
   } else {
     return authMethods[method](payload);
   }
