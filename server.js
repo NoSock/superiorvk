@@ -1,4 +1,6 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const config = require('./server/config');
 const auth = require('./server/auth');
 
@@ -17,6 +19,7 @@ const forceSSL = () =>
   };
 
 server.use(forceSSL());
+server.use(bodyParser.raw());
 
 // Serve only the static files form the dist directory
 server.use(express.static(publicPath));
