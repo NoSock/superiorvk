@@ -1,5 +1,6 @@
 const express = require('express');
-
+const config = require('server/config');
+const auth = require('auth');
 
 const publicPath = __dirname + '/dist/superiorvk';
 
@@ -20,10 +21,21 @@ server.use(forceSSL());
 // Serve only the static files form the dist directory
 server.use(express.static(publicPath));
 
-server.get('/*', function (req, res) {
-  res.sendFile(publicPath +'/index.html');
-});
+server.post('/auth', (req, res) => res
+  .status(200).send(
+    auth.auth(req.get('method'), req.get('payload'))
+  )
+);
 
+server.post('/reg', (req, res) => res
+  .status(200).send(
+    auth.reg(req.get('login'), req.get('password'))
+  )
+);
+
+server.get('/*', (req, res) =>
+  res.sendFile(publicPath +'/index.html')
+);
 
 
 // Start the server by listening on the default Heroku port
