@@ -21,13 +21,13 @@ server.use(forceSSL());
 // Serve only the static files form the dist directory
 server.use(express.static(publicPath));
 
-server.post('/auth', (req, res) => res
+server.post('/authenticate', (req, res) => res
   .status(200).send(
     auth.auth(req.get('method'), req.get('payload'))
   )
 );
 
-server.post('/reg', (req, res) => res
+server.post('/register', (req, res) => res
   .status(200).send(
     auth.reg(req.get('login'), req.get('password'))
   )
