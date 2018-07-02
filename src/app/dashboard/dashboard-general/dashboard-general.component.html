@@ -1,10 +1,11 @@
 <div class="flex-row">
   <nav>
-    <a routerLink="feed">
-      <div>Feed</div>
-    </a>
-    <a routerLink="messages">
-      <div>Messages</div>
+    <a *ngFor="let tab of tabs"
+       [routerLink]="tab"
+       [class.active]="tab === currentPath">
+      <div>
+        {{tab|titlecase}}
+      </div>
     </a>
   </nav>
   <main>
