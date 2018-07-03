@@ -1,36 +1,6 @@
 const admin = require('firebase-admin');
-const config = require('./config');
-const serviceAccount = config.serviceAccount;
-const databaseUrl = config.databaseUrl;
 
-function watch(dbRef, target) {
-  let subs = [];
-  subs.push(
-    dbRef.on('child_added', snapshot =>
-      target[snapshot.key] = snapshot.data()
-    )
-  );
-
-  subs.push(
-    dbRef.on('child_changed', snapshot =>
-      target[snapshot.key] = snapshot.data()
-    )
-  );
-
-  subs.push(
-    dbRef.on('child_removed', snapshot =>
-      delete target[snapshot.key]
-    )
-  );
-
-  return {
-    unwatch: () => {
-      dbRef.off('child_added', subs[0]);
-      dbRef.off('child_changed', subs[1]);
-      dbRef.off('child_removed', subs[2]);
-    }
-  };
-}
+const {serviceAccount, databaseUrl} = require('./config');
 
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(serviceAccount)),
@@ -38,40 +8,58 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-const root = db.ref('users');
-const usersRef = root.child('users');
-const vkIdsRef = root.child('vkIds');
-const credentialsRef = root.child('credentials');
+const usersRef = db.ref().child('users');
 
-let users = {};
-let vkIds = {};
-let credentials = {};
+function get(child) {
+  return usersRef.child(child).get();
+}
 
-let watchers = [
-  watch(usersRef, users),
-  watch(vkIdsRef, vkIds),
-  watch(credentialsRef, credentials),
-];
+function idByLogin(login) {
+  return usersRef.child('ids')
+    .orderByValue().equalTo(login).limitToFirst(1)
+    .once('value').then(snap => snap.val()?
+                        Object.keys(snap.val())[0]: false);
+}
 
-const addCredentials = (id, credentials) => {
-  if (!credentials.login || !credentials.passHash) {
-    throw new Error ('Invalid or incomplete credentials provided!');
-  }
-  credentialsRef.child(credentials.login).set({
-    passHash: credentials.passHash,
-    userId: id
-  });
-};
+function passwordByLogin(login) {
+  return usersRef.child('passwords')
+    .orderByKey().equalTo(login).limitToFirst(1)
+    .once('value').then(snap => snap.val() ?
+      snap.val()[login] : false);
+}
 
-const addUser = (id, {credentials, }) => {
-  if (!id) throw new Error('No ID specified for user creation!');
-  if (users[id]) throw new Error('User with the specified ID exists!');
-  if (credentials) addCredentials(id, credentials);
-};
+function loginById(id) {
+  return usersRef.child('ids')
+    .orderByKey().equalTo(id).limitToFirst(1)
+    .once('value').then(snap => snap.val() ?
+                        snap.val()[id] : false)
+    .then(login =>
+      login === true ?
+      false : login);
+}
+
+function idExists(id) {
+  return usersRef.child('ids')
+    .orderByKey().equalTo(id).limitToFirst(1)
+    .once('value').then(snap => !!snap.val());
+}
+
+async function addUser(id, login, password) {
+  if (await idExists(id))
+    throw new Exception('Id exists!');
+  if (await idByLogin(login))
+    throw new Exception('Id exists!');
+  const updateObj = {
+    [`ids/${id}`]: login || true,
+    [`passwords/${login}`]: login? password : false
+  };
+  return usersRef.update(updateObj);
+}
 
 module.exports = {
-  users,
-  vkIds,
-  credentials,
+  idExists,
+  idByLogin,
+  loginById,
+  passwordByLogin,
   addUser
 };

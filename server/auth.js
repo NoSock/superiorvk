@@ -1,19 +1,20 @@
 'use strict'
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const uuid = require('uuid/v4');
 
 const db = require('./db');
 const secret = require('./config').JWTSecret;
 
-function generateUserToken(userId) {
-  return jwt.sign(
+function generateUserToken(id) {
+  const res = jwt.sign(
     {
-      userId,
-      timestamp: Date.now()
+      id
     },
     secret,
     {expiresIn: '7d'}
   );
+  return res;
 }
 
 function decodeUserToken(token) {
@@ -26,19 +27,8 @@ function decodeUserToken(token) {
   return result;
 }
 
-function renewUserToken(token) {
-  let userId = decodeUserToken(token);
-  if (userId) {
-    return generateUserToken(userId);
-  }
-}
-
 const generateUserId = () => {
-  let id;
-  do {
-    id = uuid();
-  } while (db.users[id]);
-  return id;
+  return uuid();
 };
 
 const vkAuth = (token) => {
@@ -50,9 +40,10 @@ const vkAuth = (token) => {
 
 const hash = (password) => bcrypt.hashSync(password, 8);
 
-const passHashAuth = (login, password) => {
-  const user = db.credentials[login];
-  if (!user || hash(password) !== user.passHash) {
+async function passwordAuth( {login, password} ) {
+  const storedHash = await db.passwordByLogin(login);
+  const id = await db.idByLogin(login);
+  if (!storedHash || !id || !bcrypt.compareSync(password, storedHash)) {
     return {
       auth: false,
       error: 'Wrong login or password supplied'
@@ -60,17 +51,19 @@ const passHashAuth = (login, password) => {
   }
   else return {
     auth: true,
-    id: user.id,
-    token: generateUserToken(user.id)
+    id,
+    token: generateUserToken(id)
   };
-};
+}
 
-const jwtAuth = (token) => {
-  const result = decodeUserToken(token);
-  if (token.id && users[token.id]) {
+async function jwtAuth (token) {
+  let {id, exp} = decodeUserToken(token) || {};
+  const result = {};
+  if (id && await db.idExists(id)) {
     result.auth = true;
     //if the token is more than 24 hours old refresh it
-    if (Date.now() - result.timestamp > 1000*39600*24) {
+    const inSixDays = Date.now() / 1000 + 6*24*3600;
+    if (exp < inSixDays) {
       result.token = generateUserToken(token.id);
     }
   } else {
@@ -78,12 +71,12 @@ const jwtAuth = (token) => {
     result.auth = false;
   }
   return result;
-};
+}
 
 const authMethods = {
   vk: vkAuth,
   jwt: jwtAuth,
-  password: passHashAuth
+  password: passwordAuth
 };
 
 const auth = (method, payload) => {
@@ -94,28 +87,32 @@ const auth = (method, payload) => {
   }
 };
 
-const reg = (login, password) => {
-  if (db.credentials[login]) {
-    return {
-      auth: false,
-      error: 'The login is already taken!'
+
+async function registerUser (login, password) {
+  const response = {};
+  if (await db.idByLogin(login)) {
+    response.auth = false;
+    response.error = {
+      code: 1,
+      text: 'The login is taken'
     };
+  } else if (!login || !password || typeof login !== 'string' ||
+              typeof password !== 'string') {
+    response.auth = false;
+    response.error = {
+      code: 2,
+      text: 'The credentials are invalid or incomplete'
+    };
+  } else {
+    const id = generateUserId();
+    await db.addUser(id, login, bcrypt.hashSync(password, 8));
+    response.auth = true;
+    response.token = generateUserToken(id);
   }
-  const id = generateUserId();
-  db.addUser(
-    id,
-    {
-      credentials: {login, password}
-    }
-  );
-  return {
-    auth: true,
-    id,
-    token: generateUserToken(id)
-  }
-};
+  return response;
+}
 
 module.exports = {
   auth,
-  reg
+  registerUser,
 };
