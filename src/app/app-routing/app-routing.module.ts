@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { VkAuthGuard } from './guards';
+import {AuthGuardsModule} from '../auth/auth-guards/auth-guards.module';
+import {AuthGuard} from '../auth/auth-guards/auth-guards';
 
 const routes: Routes = [
   {
@@ -11,7 +12,7 @@ const routes: Routes = [
   {
     path: 'dashboard',
     loadChildren: '../dashboard/dashboard.module#DashboardModule',
-    canActivate: [VkAuthGuard],
+    canActivate: [AuthGuard],
   },
   {path: '**', redirectTo: 'dashboard'},
 ];
@@ -19,11 +20,10 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
+    AuthGuardsModule,
     RouterModule.forRoot(routes),
   ],
   declarations: [],
-  providers: [
-    VkAuthGuard
-  ]
+  providers: []
 })
 export class AppRoutingModule { }
