@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  domain: 'http://localhost:80/'
+  domain: 'http://localhost/',
+  vkAppId: 6615696
 };
 
 /*

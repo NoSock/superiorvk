@@ -14,10 +14,9 @@ import { AuthGuardsModule } from './auth-guards/auth-guards.module';
     AuthLoginModule,
     AuthRegisterModule,
     AuthValidatorsModule,
-    AuthTransportModule,
     AuthGuardsModule
   ],
   declarations: [],
-  exports: [AuthTransportModule]
+  exports: []
 })
 export class AuthModule { }

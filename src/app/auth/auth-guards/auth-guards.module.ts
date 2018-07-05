@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
-import {AuthTransportModule} from '../auth-transport/auth-transport.module';
 
 @NgModule({
-  imports: [
-    AuthTransportModule
-  ],
+  imports: [],
 })
 export class AuthGuardsModule { }

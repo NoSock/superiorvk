@@ -6,18 +6,27 @@ const auth = require('./auth');
 router.use(bodyParser.json());
 
 
-router.get('/test', (req, res) =>
-  res.status(200).send('tested!' + JSON.stringify(req.query))
+//open auth methods
+router.post('/register', wrap(auth.perform('register')) );
+router.post('/authenticate', wrap(auth.perform('authenticate')) ) ;
+
+//secure methods for authorized users only
+router.use('/secure', auth.jwtMiddleware);
+//an endpoint to test the token, will be rejected by the middlleware if something goes wrong
+router.get('/secure/test', (req, res) =>
+  res.status(200).send({auth: true})
 );
 
-router.post('/register', async ({body: {login, password}}, res) => {
-  const response = await auth.registerUser(login, password);
-  res.status(200).send(response);
-});
-
-router.post('/authenticate', async ({body: {method, payload} }, res) => {
-  const response = await auth.auth(method, payload);
-  res.status(200).send(response);
-});
-
 module.exports = router;
+
+function wrap(handler) {
+  return async (req, res) => {
+    try {
+      await handler(req, res)
+    } catch (e) {
+      console.error(`Error trying to ${req.method} ${req.originalUrl}`);
+      console.error(e);
+      res.status(500).send('Server error');
+    }
+  };
+}
