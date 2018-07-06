@@ -19,8 +19,8 @@ export class AuthRegisterComponent implements OnInit {
   ngOnInit() {
     this.form = this.formBuilder.group({
       login: ['', Validators.required],
-      password: ['', [Validators.required, updateValidator('repeat')]],
-      repeat: ['', Validators.required, debounceValidator(repeatValidator('password'), 500)],
+      password: ['', [Validators.required, updateValidator('confirm')]],
+      confirm: ['', Validators.required, debounceValidator(repeatValidator('password'), 500)],
     });
   }
 

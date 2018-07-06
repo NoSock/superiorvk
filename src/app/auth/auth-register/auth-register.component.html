@@ -3,9 +3,9 @@
 </p>
 
 <form [formGroup]="form">
-  <input formControlName="login">
+  <input formControlName="login" ngFocus>
   <input type="password" formControlName="password">
-  <input type="password" formControlName="repeat">
+  <input type="password" formControlName="confirm">
   <button (click)="register()">Register</button>
   <a routerLink="../login">Already have an account?</a>
-</form>ч
+</form>

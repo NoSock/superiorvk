@@ -1,15 +1,28 @@
-h1 {
-  background: cornflowerblue;
+header {
   position: relative;
   z-index: 1;
-  color: white;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
   padding: 0.8rem;
   margin: 0;
+
+  background: cornflowerblue;
+  color: white;
   border-bottom-right-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
   box-shadow: 0.1rem 0.1rem rgba(0,0,0,0.1);
+  font-size: xx-large;
 }
 
 a {
   text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: 0.05rem solid white;
+  border-radius: 0.5rem;
+  background-color: inherit;
+  color: inherit;
 }

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {catchError, filter, first, map, mapTo, tap} from 'rxjs/operators';
+import {catchError, first, map, mapTo, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
+import {Store} from '@ngrx/store';
+import {AppState} from '../../app-state';
+import {Reset, SetJWT} from './auth-state/auth-state';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthTransportService {
   private apiUrl = environment.domain + 'api/';
   private token: string;
@@ -15,11 +16,16 @@ export class AuthTransportService {
   vkAuthUrl = 'https://oauth.vk.com/authorize?' +
     `client_id=${environment.vkAppId}&display=page&redirect_uri=` +
     `${environment.domain}auth/login&scope=` +
-    'messages&response_type=code&v=5.80&' +
+    'messages|offline&response_type=code&v=5.80&' +
     'state=vk-redirect';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private store: Store<AppState>) {
     this.isAuthenticated = new BehaviorSubject<boolean>(false);
+    this.store.select('auth', 'jwt' )
+      .subscribe(token => {
+      this.token = token;
+    });
   }
 
   private getFromApi(endpoint: string): Observable<{[key: string]: any}> {
@@ -56,7 +62,7 @@ export class AuthTransportService {
       res.headers.get('Authorization').split(' ') :
       [];
     if (authSchema[0] === 'Bearer' && authSchema[1]) {
-      this.token = authSchema[1];
+      this.store.dispatch(new SetJWT(authSchema[1]));
     }
 
     if (typeof res.body['auth'] === 'boolean') {
@@ -83,11 +89,15 @@ export class AuthTransportService {
 
   checkJwt() {
     return this.getFromApi('secure/test').pipe(
+      first(),
       mapTo(true),
-      catchError(caught => {
+      catchError(() => {
         return of(false);
-      }),
-      first()
+      })
     );
+  }
+
+  logOut() {
+    this.store.dispatch(new Reset());
   }
 }

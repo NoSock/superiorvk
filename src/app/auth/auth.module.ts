@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AuthRoutingModule } from './auth-routing/auth-routing.module';
 import { AuthLoginModule } from './auth-login/auth-login.module';
 import { AuthRegisterModule } from './auth-register/auth-register.module';
-import { AuthValidatorsModule } from './auth-validators/auth-validators.module';
-import { AuthTransportModule } from './auth-transport/auth-transport.module';
-import { AuthGuardsModule } from './auth-guards/auth-guards.module';
+import { AuthRedirectModule } from './auth-redirect/auth-redirect.module';
 
 @NgModule({
   imports: [
@@ -13,8 +11,7 @@ import { AuthGuardsModule } from './auth-guards/auth-guards.module';
     AuthRoutingModule,
     AuthLoginModule,
     AuthRegisterModule,
-    AuthValidatorsModule,
-    AuthGuardsModule
+    AuthRedirectModule
   ],
   declarations: [],
   exports: []

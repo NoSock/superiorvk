@@ -1,7 +1,7 @@
 import {CanActivate, Router} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {AuthTransportService} from '../auth-transport/auth-transport.service';
-import {first, map, tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

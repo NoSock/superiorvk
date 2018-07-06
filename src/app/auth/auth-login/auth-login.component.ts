@@ -4,14 +4,13 @@ import {AuthTransportService} from '../auth-transport/auth-transport.service';
 import {Subscription} from 'rxjs';
 import { Router} from '@angular/router';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-import {tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-auth-login',
   templateUrl: './auth-login.component.html',
   styleUrls: ['./auth-login.component.less']
 })
-export class AuthLoginComponent implements OnInit, OnDestroy {
+export class AuthLoginComponent implements OnInit {
   form: FormGroup;
   subscriptions: Subscription[] = [];
   vkAuthUrl: SafeResourceUrl;
@@ -43,12 +42,10 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   }
 
   login() {
+
       this.auth.login(this.form.value.login, this.form.value.password)
         .subscribe((val) => {
           this.router.navigateByUrl('/');
         });
-  }
-
-  ngOnDestroy() {
   }
 }

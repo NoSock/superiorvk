@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import {AuthGuardsModule} from '../auth/auth-guards/auth-guards.module';
-import {AuthGuard, UnAuthGuard} from '../auth/auth-guards/auth-guards';
+import { AuthGuard, UnAuthGuard } from '../auth/auth-guards/auth-guards';
 
 const routes: Routes = [
   {
@@ -20,11 +18,8 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    CommonModule,
-    AuthGuardsModule,
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes)
   ],
-  declarations: [],
-  providers: []
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

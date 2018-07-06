@@ -3,9 +3,11 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app/app.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
-import { RouterModule } from '@angular/router';
-import { AuthModule } from './auth/auth.module';
-import {HttpClientModule} from '@angular/common/http';
+import {AuthTransportModule} from './auth/auth-transport/auth-transport.module';
+import {StoreModule} from '@ngrx/store';
+import {authReducer} from './auth/auth-transport/auth-state/auth-state';
+import {EffectsModule} from '@ngrx/effects';
+import {AuthEffects} from './auth/auth-transport/auth-state/auth-effects';
 
 @NgModule({
   declarations: [
@@ -13,10 +15,10 @@ import {HttpClientModule} from '@angular/common/http';
   ],
   imports: [
     BrowserModule,
-    RouterModule,
     AppRoutingModule,
-    HttpClientModule,
-    AuthModule,
+    AuthTransportModule,
+    StoreModule.forRoot({auth: authReducer}),
+    EffectsModule.forRoot([AuthEffects])
   ],
   providers: [],
   bootstrap: [AppComponent]
